@@ -14,7 +14,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddScoped<GraphQLHttpClient>(options =>
+builder.Services.AddSingleton<SalaryRepository>();
+builder.Services.AddSingleton <GraphQLHttpClient>(options =>
 {
     var option = new GraphQLHttpClientOptions
     {
@@ -23,8 +24,7 @@ builder.Services.AddScoped<GraphQLHttpClient>(options =>
     var client = new GraphQLHttpClient(option, new NewtonsoftJsonSerializer());
     return client;
 });
-builder.Services.AddScoped<GraphQLRepository>();
-builder.Services.AddScoped<SalaryRepository>();
+builder.Services.AddSingleton<GraphQLRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
