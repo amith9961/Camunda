@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Camunda.Api.Client" Version="2.6.0" />
     <PackageReference Include="GraphQL.Client" Version="5.1.1" />
     <PackageReference Include="GraphQL.NewtonsoftJson" Version="7.5.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="TheOne.RabbitMq" Version="0.1.1" />
   </ItemGroup>
 
 </Project>
