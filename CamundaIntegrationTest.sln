@@ -3,9 +3,44 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{78AD9DED-173E-4754-B2B8-8361D045AAA2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{B552985B-E3A2-4CB8-91C2-F75159FB773D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{D6B12BEB-7295-4D78-8D9B-3BF415C5186A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camunda.API", "src\Camunda.API\Camunda.API.csproj", "{D30A31FA-8398-42C8-B6C8-CF424E0C8CFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Camunda.Domain", "src\Camunda.Domain\Camunda.Domain.csproj", "{B4E7F136-4333-46B7-A62A-8A8C2A661C64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.GraphQL", "src\Data.GraphQL\Data.GraphQL.csproj", "{D94087E9-36C3-42CA-93A4-7965C3FF3328}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D30A31FA-8398-42C8-B6C8-CF424E0C8CFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D30A31FA-8398-42C8-B6C8-CF424E0C8CFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D30A31FA-8398-42C8-B6C8-CF424E0C8CFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D30A31FA-8398-42C8-B6C8-CF424E0C8CFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4E7F136-4333-46B7-A62A-8A8C2A661C64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4E7F136-4333-46B7-A62A-8A8C2A661C64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4E7F136-4333-46B7-A62A-8A8C2A661C64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4E7F136-4333-46B7-A62A-8A8C2A661C64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D94087E9-36C3-42CA-93A4-7965C3FF3328}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D94087E9-36C3-42CA-93A4-7965C3FF3328}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D94087E9-36C3-42CA-93A4-7965C3FF3328}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D94087E9-36C3-42CA-93A4-7965C3FF3328}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D30A31FA-8398-42C8-B6C8-CF424E0C8CFD} = {78AD9DED-173E-4754-B2B8-8361D045AAA2}
+		{B4E7F136-4333-46B7-A62A-8A8C2A661C64} = {B552985B-E3A2-4CB8-91C2-F75159FB773D}
+		{D94087E9-36C3-42CA-93A4-7965C3FF3328} = {D6B12BEB-7295-4D78-8D9B-3BF415C5186A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F6DFE0C3-128E-4A26-BC3B-AB8516726656}
