@@ -28,7 +28,7 @@ namespace Camunda.API.Worker
                     await _externalTaskHandlerService.StartHandlingExternalTasksAsync(_cancellationTokenSource.Token);
                 }
 
-                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(50), stoppingToken);
             }
         }
 
@@ -37,10 +37,9 @@ namespace Camunda.API.Worker
             _cancellationTokenSource.Cancel();
             await base.StopAsync(cancellationToken);
         }
-
         private async Task<bool> CheckTimerEventStatusAsync()
         {
-            var response = await _httpClient.GetAsync($"{_camundaApiUrl}history/activity-instance?activityId=Event_0ajqwj4&finished=true");
+            var response = await _httpClient.GetAsync($"{_camundaApiUrl}history/activity-instance?activityId=timer_1&finished=true");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             var activities = JsonConvert.DeserializeObject<List<ActivityInstance>>(content);
