@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Text;
 using System.Threading;
 
 namespace Camunda.API.Worker
@@ -9,23 +10,23 @@ namespace Camunda.API.Worker
         public string Id { get; set; }
         public string TopicName { get; set; }
         public JObject Variables { get; set; }
+        public string WorkerId { get; set; }    
     }
     public class ExternalTaskHandlerService
     {
         private readonly HttpClient _httpClient;
-        private readonly string _camundaApiUrl; // Replace with your Camunda API URL
+        private readonly string _camundaApiUrl; 
         private bool _isRunning = false;
 
         public ExternalTaskHandlerService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _camundaApiUrl = "http://localhost:8080/engine-rest/"; // Replace with your Camunda API URL
+            _camundaApiUrl = "http://localhost:8080/engine-rest/"; 
         }
         public async Task StartHandlingExternalTasksAsync(CancellationToken cancellationToken)
         {
             if (_isRunning)
             {
-                // Already started, do nothing.
                 return;
             }
 
@@ -35,13 +36,12 @@ namespace Camunda.API.Worker
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    // Fetch external tasks from Camunda
-                    var externalTasks = await FetchExternalTasksAsync();
+                    var externalTasks = await FetchAndLockExternalTasksAsync();
                     foreach (var task in externalTasks)
                     {
-                        // Handle the task (in this case, we'll update the salary)
                         await HandleExternalTaskAsync(task);
                     }
+                    break;
                 }
             }
             finally
@@ -49,45 +49,60 @@ namespace Camunda.API.Worker
                 _isRunning = false;
             }
         }
-
-        public async Task FetchAndHandleExternalTasksAsync(CancellationToken cancellationToken)
+        private async Task<List<ExternalTaskData>> FetchAndLockExternalTasksAsync()
         {
-            while (!cancellationToken.IsCancellationRequested)
+            var fetchAndLockRequest = new
             {
-                // Fetch external tasks from Camunda
-                var externalTasks = await FetchExternalTasksAsync();
-                foreach (var task in externalTasks)
+                workerId = Guid.NewGuid().ToString(), 
+                maxTasks = 10, 
+                topics = new[]
                 {
-                    // Handle the task (in this case, we'll update the salary)
-                    await HandleExternalTaskAsync(task);
+            new
+            {
+                topicName = "updateSalary",
+                lockDuration = 10000,
+                variables = new string[] 
+                {
+                    "variable1",
+                    "variable2"
                 }
-
-                // Wait for a specific interval before fetching tasks again
-               // await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
             }
         }
+            };
 
-        private async Task<List<ExternalTaskData>> FetchExternalTasksAsync()
-        {
-            var response = await _httpClient.GetAsync($"{_camundaApiUrl}external-task?topicName=updateSalary");
+            var jsonRequest = JsonConvert.SerializeObject(fetchAndLockRequest);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync($"{_camundaApiUrl}external-task/fetchAndLock", content);
             response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<ExternalTaskData>>(content);
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<ExternalTaskData>>(jsonResponse);
         }
+
         private async Task HandleExternalTaskAsync(ExternalTaskData task)
         {
-            // Call the .NET Core API endpoint to update the salary
             var response = await _httpClient.PatchAsync("https://localhost:7094/api/v1/incrementSalary", null);
             response.EnsureSuccessStatusCode();
-
-            // Complete the external task in Camunda after processing
-            await CompleteExternalTaskAsync(task.Id);
+            await CompleteExternalTaskAsync(task.Id,task.WorkerId,true);
         }
-
-        private async Task CompleteExternalTaskAsync(string taskId)
+        private async Task CompleteExternalTaskAsync(string taskId, string workerId, bool success, Dictionary<string, object> variables = null, string errorMessage = null)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{_camundaApiUrl}external-task/{taskId}/complete");
-            await _httpClient.SendAsync(request);
+            var requestUrl = $"{_camundaApiUrl}external-task/{taskId}/complete";
+
+            var completeTaskRequest = new
+            {
+                workerId,
+                variables,
+                localVariables = new { }, 
+                errorMessage = success ? null : errorMessage
+            };
+
+            var jsonRequest = JsonConvert.SerializeObject(completeTaskRequest);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync(requestUrl, content);
+            response.EnsureSuccessStatusCode();
         }
     }
 }
